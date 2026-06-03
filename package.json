@@ -1,0 +1,29 @@
+{
+  "name": "check-in-antecipado",
+  "version": "1.0.0",
+  "description": "Web App de Pré Check-In Mobile-First com geração de QR Code para hotéis",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "check-in",
+    "hotel",
+    "qr-code",
+    "mobile-first",
+    "pre-checkin"
+  ],
+  "author": "Laion Silva",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  }
+}
