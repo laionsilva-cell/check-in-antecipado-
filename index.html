@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pré Check-In Hoteleiro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- SEÇÃO FORMULÁRIO -->
+        <div id="formSection" class="bg-white rounded-lg shadow-2xl p-8 space-y-6">
+            <!-- Header -->
+            <div class="text-center space-y-2">
+                <h1 class="text-3xl font-bold text-gray-800">Pré Check-In</h1>
+                <p class="text-gray-500 text-sm">Preencha seus dados e chegue mais rápido</p>
+            </div>
+
+            <!-- Formulário -->
+            <form id="checkinForm" class="space-y-4">
+                <!-- Nome Completo -->
+                <div>
+                    <label for="nome" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Nome Completo
+                    </label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        placeholder="João Silva Santos"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    >
+                </div>
+
+                <!-- CPF/Passaporte -->
+                <div>
+                    <label for="documento" class="block text-sm font-semibold text-gray-700 mb-2">
+                        CPF ou Passaporte
+                    </label>
+                    <input
+                        type="text"
+                        id="documento"
+                        name="documento"
+                        placeholder="000.000.000-00"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    >
+                </div>
+
+                <!-- Celular -->
+                <div>
+                    <label for="celular" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Celular
+                    </label>
+                    <input
+                        type="tel"
+                        id="celular"
+                        name="celular"
+                        placeholder="(11) 99999-9999"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    >
+                </div>
+
+                <!-- Data de Nascimento -->
+                <div>
+                    <label for="dataNascimento" class="block text-sm font-semibold text-gray-700 mb-2">
+                        Data de Nascimento
+                    </label>
+                    <input
+                        type="date"
+                        id="dataNascimento"
+                        name="dataNascimento"
+                        required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                    >
+                </div>
+
+                <!-- Botão Enviar -->
+                <button
+                    type="submit"
+                    class="w-full bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold py-3 rounded-lg transition transform hover:scale-105 active:scale-95 mt-6"
+                >
+                    Gerar Código QR
+                </button>
+            </form>
+
+            <!-- Mensagem de Carregamento -->
+            <div id="loadingMessage" class="hidden text-center">
+                <div class="inline-block">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                </div>
+                <p class="text-gray-600 mt-2 text-sm">Processando...</p>
+            </div>
+        </div>
+
+        <!-- SEÇÃO SUCESSO COM QR CODE -->
+        <div id="successSection" class="hidden bg-white rounded-lg shadow-2xl p-8 space-y-6 text-center">
+            <!-- Check Verde -->
+            <div class="flex justify-center">
+                <div class="bg-green-100 rounded-full p-4">
+                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Textos de Sucesso -->
+            <div class="space-y-2">
+                <h2 class="text-2xl font-bold text-gray-800">Pré Check-In Concluído!</h2>
+                <p class="text-gray-500 text-sm">Seu código QR está pronto. Mostre na recepção.</p>
+            </div>
+
+            <!-- QR Code Container -->
+            <div class="bg-gray-50 p-6 rounded-lg flex justify-center">
+                <div id="qrcodeContainer" class="bg-white p-4 rounded"></div>
+            </div>
+
+            <!-- ID do Registro -->
+            <div class="bg-indigo-50 p-4 rounded-lg">
+                <p class="text-xs text-gray-600 mb-1">Seu ID de Registro:</p>
+                <p id="registroId" class="text-lg font-mono font-bold text-indigo-700 break-all"></p>
+            </div>
+
+            <!-- Informações Confirmadas -->
+            <div class="bg-gray-50 p-4 rounded-lg text-left space-y-2">
+                <p class="text-xs text-gray-600 font-semibold">DADOS CONFIRMADOS:</p>
+                <p class="text-sm text-gray-700"><strong>Nome:</strong> <span id="confirmNome"></span></p>
+                <p class="text-sm text-gray-700"><strong>Documento:</strong> <span id="confirmDocumento"></span></p>
+                <p class="text-sm text-gray-700"><strong>Celular:</strong> <span id="confirmCelular"></span></p>
+                <p class="text-sm text-gray-700"><strong>Nascimento:</strong> <span id="confirmData"></span></p>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="space-y-3">
+                <button
+                    id="downloadBtn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition"
+                >
+                    Baixar QR Code
+                </button>
+                <button
+                    id="novoBtn"
+                    class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg transition"
+                >
+                    Novo Registro
+                </button>
+            </div>
+
+            <!-- Rodapé -->
+            <p class="text-xs text-gray-500">
+                Salve seu ID ou o QR Code no seu celular para apresentar na recepção.
+            </p>
+        </div>
+    </div>
+
+    <!-- Script de Funcionamento -->
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        // Elementos do DOM
+        const formSection = document.getElementById('formSection');
+        const successSection = document.getElementById('successSection');
+        const checkinForm = document.getElementById('checkinForm');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const qrcodeContainer = document.getElementById('qrcodeContainer');
+        const novoBtn = document.getElementById('novoBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        // Evento: Envio do Formulário
+        checkinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Coletar dados do formulário
+            const formData = {
+                nome: document.getElementById('nome').value.trim(),
+                documento: document.getElementById('documento').value.trim(),
+                celular: document.getElementById('celular').value.trim(),
+                dataNascimento: document.getElementById('dataNascimento').value
+            };
+
+            // Validação básica
+            if (!formData.nome || !formData.documento || !formData.celular || !formData.dataNascimento) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            // Mostrar carregamento
+            loadingMessage.classList.remove('hidden');
+            checkinForm.classList.add('hidden');
+
+            try {
+                // Enviar para API
+                const response = await fetch(`${API_URL}/checkin`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro ao processar check-in');
+                }
+
+                const result = await response.json();
+                const registroId = result.id;
+
+                // Preencher dados na seção de sucesso
+                document.getElementById('registroId').textContent = registroId;
+                document.getElementById('confirmNome').textContent = formData.nome;
+                document.getElementById('confirmDocumento').textContent = formData.documento;
+                document.getElementById('confirmCelular').textContent = formData.celular;
+                document.getElementById('confirmData').textContent = new Date(formData.dataNascimento).toLocaleDateString('pt-BR');
+
+                // Limpar QR Code anterior
+                qrcodeContainer.innerHTML = '';
+
+                // Gerar QR Code com ID
+                new QRCode(qrcodeContainer, {
+                    text: registroId,
+                    width: 256,
+                    height: 256,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+
+                // Esconder formulário e mostrar sucesso
+                loadingMessage.classList.add('hidden');
+                formSection.classList.add('hidden');
+                successSection.classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao processar seu check-in. Tente novamente.');
+                loadingMessage.classList.add('hidden');
+                checkinForm.classList.remove('hidden');
+            }
+        });
+
+        // Evento: Novo Registro
+        novoBtn.addEventListener('click', () => {
+            checkinForm.reset();
+            formSection.classList.remove('hidden');
+            successSection.classList.add('hidden');
+            checkinForm.classList.remove('hidden');
+            loadingMessage.classList.add('hidden');
+        });
+
+        // Evento: Download QR Code
+        downloadBtn.addEventListener('click', () => {
+            const canvas = qrcodeContainer.querySelector('canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = `qrcode-${document.getElementById('registroId').textContent}.png`;
+                link.click();
+            }
+        });
+    </script>
+</body>
+</html>
