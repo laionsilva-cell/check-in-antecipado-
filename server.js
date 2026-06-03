@@ -5,6 +5,7 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const PORT = 3000;
@@ -12,6 +13,16 @@ const PORT = 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// ========================================
+// SERVIR ARQUIVOS ESTÁTICOS (index.html)
+// ========================================
+app.use(express.static(path.join(__dirname)));
+
+// Rota raiz para servir index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // ========================================
 // BANCO DE DADOS EM MEMÓRIA
